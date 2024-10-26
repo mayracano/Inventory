@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BookInventoryServiceImpl implements BookInventoryService {
+public class BookInventoryServiceImpl implements BookInventoryService{
 
     @Autowired
     private BookInventoryRepository bookInventoryRepository;

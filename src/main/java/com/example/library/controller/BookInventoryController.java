@@ -1,7 +1,7 @@
 package com.example.library.controller;
 
 import com.example.library.dto.BookInventoryDTO;
-import com.example.library.dto.BookReservation;
+import com.example.library.dto.BookReservationDTO;
 import com.example.library.dto.BookReservationEvent;
 import com.example.library.dto.BookReservationStatus;
 import com.example.library.service.BookInventoryService;
@@ -31,20 +31,20 @@ public class BookInventoryController {
 
         BookReservation bookReservation = bookReservationEvent.getBookReservation();
         BookInventoryDTO bookInventoryDTO = new BookInventoryDTO();
-        bookInventoryDTO.setReservationID(bookReservation.getId());
-        bookInventoryDTO.setBookId(bookReservation.getBookId());
-        bookInventoryDTO.setUserId(bookReservation.getUserId());
+        bookInventoryDTO.setReservationID(bookReservationDTO.getId());
+        bookInventoryDTO.setBookId(bookReservationDTO.getBookId());
+        bookInventoryDTO.setUserId(bookReservationDTO.getUserId());
 
         try {
             inventoryService.removeFromInventory(bookInventoryDTO);
             BookReservationEvent bookReservationCompleteEvent = new BookReservationEvent();
-            bookReservationCompleteEvent.setBookReservation(bookReservation);
+            bookReservationCompleteEvent.setBookReservation(bookReservationDTO);
             bookReservationCompleteEvent.setBookReservationStatus(BookReservationStatus.COMPLETED);
             kafkaTemplate.send("completed-inventory", bookReservationEvent);
             LOGGER.info(String.format("Sent 'completed-inventory' for user: %s and book: %s", bookReservationCompleteEvent.getBookReservation().getBookId(), bookReservationCompleteEvent.getBookReservation().getUserId()));
         } catch(Exception e) {
             BookReservationEvent bookReservationReverseEvent = new BookReservationEvent();
-            bookReservationReverseEvent.setBookReservation(bookReservation);
+            bookReservationReverseEvent.setBookReservation(bookReservationDTO);
             bookReservationReverseEvent.setBookReservationStatus(BookReservationStatus.REVERSED);
             kafkaTemplate.send("removed-inventory-failed", bookReservationEvent);
             LOGGER.info(String.format("Sent 'removed-inventory-failed' for user: %s and book: %s", bookReservationReverseEvent.getBookReservation().getBookId(), bookReservationReverseEvent.getBookReservation().getUserId()));
