@@ -1,7 +1,7 @@
 package com.example.library.controller;
 
 import com.example.library.dto.BookInventoryDTO;
-import com.example.library.dto.BookReservation;
+import com.example.library.dto.BookReservationDTO;
 import com.example.library.dto.BookReservationEvent;
 import com.example.library.dto.BookReservationStatus;
 import com.example.library.service.BookInventoryService;
@@ -20,27 +20,27 @@ public class BookInventoryController {
     @Autowired
     KafkaTemplate<String, BookReservationEvent> kafkaTemplate;
 
-    @KafkaListener(topics = "new-reservation", groupId = "reservations-group")
+    @KafkaListener(topics = "add-inventory", groupId = "reservations-group")
     public void addToInventory(String event) throws Exception {
 
         BookReservationEvent bookReservationEvent = new ObjectMapper().readValue(event, BookReservationEvent.class);
-        BookReservation bookReservation = bookReservationEvent.getBookReservation();
+        BookReservationDTO bookReservationDTO = bookReservationEvent.getBookReservation();
         BookInventoryDTO bookInventoryDTO = new BookInventoryDTO();
-        bookInventoryDTO.setReservationID(bookReservation.getId());
-        bookInventoryDTO.setBookId(bookReservation.getBookId());
-        bookInventoryDTO.setUserId(bookReservation.getUserId());
+        bookInventoryDTO.setReservationID(bookReservationDTO.getId());
+        bookInventoryDTO.setBookId(bookReservationDTO.getBookId());
+        bookInventoryDTO.setUserId(bookReservationDTO.getUserId());
 
         try {
             inventoryService.addToInventory(bookInventoryDTO);
             BookReservationEvent bookReservationCompleteEvent = new BookReservationEvent();
-            bookReservationCompleteEvent.setBookReservation(bookReservation);
+            bookReservationCompleteEvent.setBookReservation(bookReservationDTO);
             bookReservationCompleteEvent.setBookReservationStatus(BookReservationStatus.COMPLETED);
-            kafkaTemplate.send("completed-reservations", bookReservationEvent);
+            kafkaTemplate.send("completed-inventory", bookReservationCompleteEvent);
         } catch(Exception e) {
             BookReservationEvent bookReservationReverseEvent = new BookReservationEvent();
-            bookReservationReverseEvent.setBookReservation(bookReservation);
+            bookReservationReverseEvent.setBookReservation(bookReservationDTO);
             bookReservationReverseEvent.setBookReservationStatus(BookReservationStatus.REVERSED);
-            kafkaTemplate.send("reversed-reservations", bookReservationEvent);
+            kafkaTemplate.send("reversed-inventory", bookReservationReverseEvent);
         }
     }
 }

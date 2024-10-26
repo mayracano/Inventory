@@ -1,15 +1,15 @@
 package com.example.library.dto;
 
 public class BookReservationEvent {
-    private BookReservation bookReservation;
+    private BookReservationDTO bookReservationDTO;
     private BookReservationStatus bookReservationStatus;
 
-    public BookReservation getBookReservation() {
-        return bookReservation;
+    public BookReservationDTO getBookReservation() {
+        return bookReservationDTO;
     }
 
-    public void setBookReservation(BookReservation bookReservation) {
-        this.bookReservation = bookReservation;
+    public void setBookReservation(BookReservationDTO bookReservationDTO) {
+        this.bookReservationDTO = bookReservationDTO;
     }
 
     public BookReservationStatus getBookReservationStatus() {

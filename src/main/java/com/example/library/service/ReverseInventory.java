@@ -17,7 +17,7 @@ public class ReverseInventory {
     @Autowired
     private BookInventoryRepository bookInventoryRepository;
 
-    @KafkaListener(topics = "reversed-inventory", groupId = "inventory-group")
+    @KafkaListener(topics = "reverse-inventory", groupId = "inventory-group")
     public void reverseInventory(String event) {
         try {
             BookInventoryEvent bookInventoryEvent = new ObjectMapper().readValue(event, BookInventoryEvent.class);
