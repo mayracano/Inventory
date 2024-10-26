@@ -2,11 +2,13 @@ package com.example.library.service;
 
 import java.util.Optional;
 
-import com.example.library.dto.BookInventoryEvent;
+import com.example.library.dto.BookReservationEvent;
 import com.example.library.model.BookInventory;
 import com.example.library.repository.BookInventoryRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Controller;
@@ -14,14 +16,18 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ReverseInventory {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReverseInventory.class);
     @Autowired
     private BookInventoryRepository bookInventoryRepository;
 
     @KafkaListener(topics = "reverse-inventory", groupId = "inventory-group")
     public void reverseInventory(String event) {
+
         try {
-            BookInventoryEvent bookInventoryEvent = new ObjectMapper().readValue(event, BookInventoryEvent.class);
-            Optional<BookInventory> optionalInventory = bookInventoryRepository.findByBookId(bookInventoryEvent.getBookInventory().getBookId());
+            BookReservationEvent bookReservationEvent = new ObjectMapper().readValue(event, BookReservationEvent.class);
+            LOGGER.info(String.format("Received 'reversed-inventory', operation to reverse the remove of a book from the inventory for user: %s and book: %s", bookReservationEvent.getBookReservation().getBookId(), bookReservationEvent.getBookReservation().getUserId()));
+
+            Optional<BookInventory> optionalInventory = bookInventoryRepository.findByBookId(bookReservationEvent.getBookReservation().getBookId());
             optionalInventory.ifPresent(bookInventory -> {
                 if (bookInventory.getQuantity() > 0) {
                     int newQuantity = bookInventory.getQuantity() - 1;
