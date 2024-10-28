@@ -29,7 +29,7 @@ public class BookInventoryController {
         BookReservationEvent bookReservationEvent = new ObjectMapper().readValue(event, BookReservationEvent.class);
         LOGGER.info(String.format("Received 'removed-inventory', operation to remove a book from the inventory for user: %s and book: %s", bookReservationEvent.getBookReservation().getBookId(), bookReservationEvent.getBookReservation().getUserId()));
 
-        BookReservation bookReservation = bookReservationEvent.getBookReservation();
+        BookReservationDTO bookReservationDTO = bookReservationEvent.getBookReservation();
         BookInventoryDTO bookInventoryDTO = new BookInventoryDTO();
         bookInventoryDTO.setReservationID(bookReservationDTO.getId());
         bookInventoryDTO.setBookId(bookReservationDTO.getBookId());
