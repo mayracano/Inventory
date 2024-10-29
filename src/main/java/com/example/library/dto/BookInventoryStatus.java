@@ -1,6 +1,11 @@
 package com.example.library.dto;
 
 public enum BookInventoryStatus {
+    ADDED,
+    FAILED,
     AVAILABLE,
-    UNAVAILABLE;
+    PENDING,
+    REMOVED,
+    REVERSED,
+    UNAVAILABLE
 }

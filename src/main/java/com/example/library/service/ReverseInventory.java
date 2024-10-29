@@ -30,11 +30,9 @@ public class ReverseInventory {
 
             Optional<BookInventory> optionalInventory = bookInventoryRepository.findByBookId(bookReservationEvent.getBookReservation().getBookId());
             optionalInventory.ifPresent(bookInventory -> {
-                if (bookInventory.getQuantity() > 0) {
-                    int newQuantity = bookInventory.getQuantity() + 1;
-                    bookInventory.setQuantity(newQuantity);
-                    bookInventoryRepository.save(bookInventory);
-                }
+                int newQuantity = bookInventory.getQuantity() + 1;
+                bookInventory.setQuantity(newQuantity);
+                bookInventoryRepository.save(bookInventory);
             });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

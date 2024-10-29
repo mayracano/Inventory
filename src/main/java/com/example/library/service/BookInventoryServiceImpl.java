@@ -46,13 +46,13 @@ public class BookInventoryServiceImpl implements BookInventoryService{
             removeFromInventory(bookInventoryDTO);
             BookReservationEvent bookReservationCompleteEvent = new BookReservationEvent();
             bookReservationCompleteEvent.setBookReservation(bookReservationDTO);
-            bookReservationCompleteEvent.setBookReservationStatus(BookReservationStatus.COMPLETED);
+            bookReservationCompleteEvent.setBookInventoryStatus(BookInventoryStatus.REMOVED);
             kafkaTemplate.send("completed-inventory", bookReservationEvent);
             LOGGER.info(String.format("Sent 'completed-inventory' for user: %s and book: %s", bookReservationCompleteEvent.getBookReservation().getBookId(), bookReservationCompleteEvent.getBookReservation().getUserId()));
         } catch(Exception e) {
             BookReservationEvent bookReservationReverseEvent = new BookReservationEvent();
             bookReservationReverseEvent.setBookReservation(bookReservationDTO);
-            bookReservationReverseEvent.setBookReservationStatus(BookReservationStatus.REVERSED);
+            bookReservationReverseEvent.setBookInventoryStatus(BookInventoryStatus.FAILED);
             kafkaTemplate.send("removed-inventory-failed", bookReservationEvent);
             LOGGER.info(String.format("Sent 'removed-inventory-failed' for user: %s and book: %s", bookReservationReverseEvent.getBookReservation().getBookId(), bookReservationReverseEvent.getBookReservation().getUserId()));
         }

@@ -1,22 +1,14 @@
 package com.example.library.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
 public class BookReservationEvent {
-    private BookReservationDTO bookReservationDTO;
+    private BookReservationDTO bookReservation;
     private BookReservationStatus bookReservationStatus;
-
-    public BookReservationDTO getBookReservation() {
-        return bookReservationDTO;
-    }
-
-    public void setBookReservation(BookReservationDTO bookReservationDTO) {
-        this.bookReservationDTO = bookReservationDTO;
-    }
-
-    public BookReservationStatus getBookReservationStatus() {
-        return bookReservationStatus;
-    }
-
-    public void setBookReservationStatus(BookReservationStatus bookReservationStatus) {
-        this.bookReservationStatus = bookReservationStatus;
-    }
+    private BookInventoryStatus bookInventoryStatus;
 }
